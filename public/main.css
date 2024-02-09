@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+}
+.nav {
+  display: flex;
+  padding: 15px;
+  align-items: center;
+  background: white;
+}
+.nav a {
+  margin-right: 10px;
+}
+.logo {
+  font-weight: bold;
+}
+
+.background {
+  background: #e91e63;
+  width: 100%;
+  height: 200px;
+}
+
+.main-container {
+  text-align: center;
+  width: 80%;
+  height: 80%;
+  border-radius: 20px;
+  background: #eee;
+}
