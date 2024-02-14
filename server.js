@@ -23,6 +23,10 @@ app.get("/about", (요청, 응답) => {
   응답.sendFile(__dirname + "/about.html");
 });
 
+app.get("/time", (요청, 응답) => {
+  응답.render("time.ejs", { time: new Date() });
+});
+
 const { MongoClient } = require("mongodb");
 
 let db;
