@@ -3,6 +3,8 @@ const app = express();
 
 app.use(express.static(__dirname + "/public"));
 app.set("view engine", "ejs");
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (요청, 응답) => {
   응답.sendFile(__dirname + "/index.html");
@@ -25,6 +27,28 @@ app.get("/about", (요청, 응답) => {
 
 app.get("/time", (요청, 응답) => {
   응답.render("time.ejs", { time: new Date() });
+});
+
+app.get("/write", (요청, 응답) => {
+  응답.render("write.ejs");
+});
+
+app.post("/add", async (요청, 응답) => {
+  console.log(요청.body);
+
+  try {
+    if (요청.body.title == "") {
+      응답.send("fill the title");
+    } else {
+      await db
+        .collection("post")
+        .insertOne({ title: 요청.body.title, content: 요청.body.content });
+      응답.redirect("/list");
+    }
+  } catch (e) {
+    console.log(e);
+    응답.status(500).send("server blew up");
+  }
 });
 
 const { MongoClient } = require("mongodb");
