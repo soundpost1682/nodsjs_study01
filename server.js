@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const { ObjectId } = require("mongodb");
 
 app.use(express.static(__dirname + "/public"));
 app.set("view engine", "ejs");
@@ -17,7 +18,6 @@ app.get("/news", (요청, 응답) => {
 
 app.get("/list", async (요청, 응답) => {
   let result = await db.collection("post").find().toArray();
-  console.log(result);
   응답.render("list.ejs", { posts: result });
 });
 
@@ -48,6 +48,19 @@ app.post("/add", async (요청, 응답) => {
   } catch (e) {
     console.log(e);
     응답.status(500).send("server blew up");
+  }
+});
+
+app.get("/detail/:id", async (요청, 응답) => {
+  try {
+    let result = await db
+      .collection("post")
+      .findOne({ _id: new ObjectId(요청.params.id) });
+
+    응답.render("detail.ejs", { result: result });
+  } catch (e) {
+    console.log(e);
+    응답.status(400).send("wrong URL");
   }
 });
 
