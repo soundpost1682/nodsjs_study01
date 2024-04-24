@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
-const { ObjectId } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
+const methodOverride = require("method-override");
 
+app.use(methodOverride("_method"));
 app.use(express.static(__dirname + "/public"));
 app.set("view engine", "ejs");
 app.use(express.json());
@@ -64,7 +66,23 @@ app.get("/detail/:id", async (요청, 응답) => {
   }
 });
 
-const { MongoClient } = require("mongodb");
+app.get("/edit/:id", async (요청, 응답) => {
+  db.collection("post").updateOne({ a: 1 }, { $set: { title: "babo" } });
+  let result = await db
+    .collection("post")
+    .findOne({ _id: new ObjectId(요청.params.id) });
+  응답.render("edit.ejs", { result: result });
+});
+
+app.put("/edit", async (요청, 응답) => {
+  await db
+    .collection("post")
+    .updateOne(
+      { _id: new ObjectId(요청.body.id) },
+      { $set: { title: 요청.body.title, content: 요청.body.content } }
+    );
+  응답.redirect("list");
+});
 
 let db;
 const url =
