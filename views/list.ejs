@@ -15,14 +15,28 @@
         <h4>
           <a href="/detail/<%= posts[i]._id %>"><%= posts[i].title %></a>
           <a href="/edit/<%= posts[i]._id %>">✏️</a>
+          <span class="delete" data-id="<%= posts[i]._id %>">🗑</span>
         </h4>
         <p><%= posts[i].content %></p>
       </div>
       <% } %>
-      <!-- <div class="list-box">
-        <h4><%= posts[1].title %></h4>
-        <p><%= posts[1].content %></p>
-      </div> -->
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      for (let i = 0; i < "<%= posts.length %>"; i++) {
+        document
+          .querySelectorAll(".delete")
+          [i].addEventListener("click", function (e) {
+            e.target.dataset.id;
+            fetch("/delete?docid=" + e.target.dataset.id, {
+              method: "DELETE",
+            })
+              .then((r) => r.text())
+              .then((r) => {
+                e.target.parentElement.parentElement.style.display = "none";
+              });
+          });
+      }
+    </script>
   </body>
 </html>

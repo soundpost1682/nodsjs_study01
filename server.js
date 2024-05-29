@@ -84,16 +84,24 @@ app.put("/edit", async (요청, 응답) => {
   응답.redirect("list");
 });
 
+app.delete("/delete", async (요청, 응답) => {
+  console.log(요청.query);
+  await db
+    .collection("post")
+    .deleteOne({ _id: new ObjectId(요청.query.docid) });
+  응답.send("Delete Complted");
+});
+
 let db;
 const url =
   "mongodb+srv://guarneri1682:09201120@dbmong.0wqva6p.mongodb.net/?retryWrites=true&w=majority";
 new MongoClient(url)
   .connect()
   .then((client) => {
-    console.log("DB연결성공");
+    console.log("connected your DB");
     db = client.db("forum");
     app.listen(8080, () => {
-      console.log("http://localhost:8080 에서 running");
+      console.log("http://localhost:8080 running");
     });
   })
   .catch((err) => {
