@@ -21,6 +21,9 @@
       </div>
       <% } %>
     </div>
+
+    <a href="/list/next/<%= posts[posts.length-1]._id %>">NEXT!</a>
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
       for (let i = 0; i < "<%= posts.length %>"; i++) {
