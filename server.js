@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const { MongoClient, ObjectId } = require("mongodb");
 const methodOverride = require("method-override");
+const bcrypt = require("bcrypt");
 
 app.use(methodOverride("_method"));
 app.use(express.static(__dirname + "/public"));
@@ -12,6 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+const MongoStore = require("connect-mongo");
 
 app.use(passport.initialize());
 app.use(
@@ -19,6 +21,11 @@ app.use(
     secret: "암호화에 쓸 비번",
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl:
+        "mongodb+srv://guarneri1682:09201120@dbmong.0wqva6p.mongodb.net/?retryWrites=true&w=majority",
+      dbName: "forum",
+    }),
   })
 );
 app.use(passport.session());
@@ -149,7 +156,8 @@ passport.use(
     if (!result) {
       return cb(null, false, { message: "아이디 DB에 없음" });
     }
-    if (result.password == 입력한비번) {
+
+    if (await bcrypt.compare(입력한비번, result.password)) {
       return cb(null, result);
     } else {
       return cb(null, false, { message: "비번불일치" });
@@ -187,4 +195,16 @@ app.post("/login", async (요청, 응답, next) => {
       응답.redirect("/");
     });
   })(요청, 응답, next);
+});
+
+app.get("/register", async (요청, 응답) => {
+  응답.render("register.ejs");
+});
+
+app.post("/register", async (요청, 응답) => {
+  let hashe = await bcrypt.hash(요청.body.password, 10);
+  await db
+    .collection("user")
+    .insertOne({ username: 요청.body.username, password: hashe });
+  응답.redirect("/");
 });
